@@ -35,6 +35,19 @@ int main()
     displayAllBooksInLib(library);
     printf("\n");
 
+    Customer* c1 = createCustomer(1, "Alice Dupont", "123 Rue de la Liberté");
+    Customer* c2 = createCustomer(2, "Bob Martin"," 456 Avenue de la République");
+    Customer* c3 = createCustomer(3, "Charlie Vincent", "789 Boulevard des Etoiles");
+    printCustomer(c1);
+    printCustomer(c2);
+    printCustomer(c3);
+    printf("\n");  
+
+    modifyCustomer(c1, 1, "Alice Dupont", "987 Rue de la Paix");
+    printCustomer(c1);
+    printCustomer(c2);
+    printCustomer(c3);
+    printf("\n");
 
     return 0;
 }
