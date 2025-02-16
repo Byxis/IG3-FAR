@@ -51,11 +51,8 @@ void displayAllBooksInLib(Library* library)
     Node* node = library->root;
     while (node != NULL)
     {
-        printf("a");
         printBook(node->book);
-        printf("b");
         node = node->next;
-        printf("c");
     }
 }
 
@@ -71,6 +68,10 @@ void modifyBookFromLib(Library* library, char* isbn, char* title, char* author, 
 void removeBookFromLib(Library* library, char* isbn)
 {
     Node* node = library->root;
+    if(node == NULL)
+    {
+        return;
+    }
 
     while (node->next != NULL && node->book->isbn != isbn)
     {
@@ -81,9 +82,18 @@ void removeBookFromLib(Library* library, char* isbn)
     {
         Node* prev = node->prev;
         Node* next = node->next;
-
-        prev->next = next;
-        next->prev = prev;
+        if(prev == NULL)
+        {
+            library->root = next;
+        }
+        if(next != NULL)
+        {
+            next->prev = prev;
+        }
+        if(prev != NULL)
+        {
+            prev->next = next;
+        }
 
         free(node);
     }
