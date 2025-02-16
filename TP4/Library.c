@@ -9,16 +9,16 @@ Library* createLib()
         return NULL;
     }
 
-    library->root = NULL;
-    library->curr = NULL;
+    library->rootBook = NULL;
+    library->rootCustomer = NULL;
 
     return library;
 }
 
-void addToBookLib(Library* library, Book* book)
+void addBookToLib(Library* library, Book* book)
 {
-    Node* newNode = (Node*) malloc(sizeof(Node));
-    Node* rootNode = library->root;
+    BNode* newNode = (BNode*) malloc(sizeof(BNode));
+    BNode* rootNode = library->rootBook;
     newNode->book = book;
     newNode->prev = NULL;
     newNode->next = NULL;
@@ -27,19 +27,19 @@ void addToBookLib(Library* library, Book* book)
         newNode->next = rootNode;
         rootNode->prev = newNode;
     }
-    library->root = newNode;
+    library->rootBook = newNode;
 
 }
 
 Book* getBookFromLib(Library* library, char* isbn)
 {
-    Node* node = library->root;
+    BNode* node = library->rootBook;
 
     while (node->next != NULL && node->book->isbn != isbn)
     {
         node = node->next;
     }
-    if (node->book->isbn == isbn)
+    if (node != NULL && node->book->isbn == isbn)
     {
         return node->book;
     }
@@ -48,7 +48,7 @@ Book* getBookFromLib(Library* library, char* isbn)
 
 void displayAllBooksInLib(Library* library)
 {
-    Node* node = library->root;
+    BNode* node = library->rootBook;
     while (node != NULL)
     {
         printBook(node->book);
@@ -59,7 +59,7 @@ void displayAllBooksInLib(Library* library)
 void modifyBookFromLib(Library* library, char* isbn, char* title, char* author, int year)
 {
     Book* libBook = getBookFromLib(library, isbn);
-    if (libBook->isbn == isbn)
+    if (libBook != NULL)
     {
         modifyBook(libBook, isbn, title, author, year);
     }
@@ -67,7 +67,7 @@ void modifyBookFromLib(Library* library, char* isbn, char* title, char* author, 
 
 void removeBookFromLib(Library* library, char* isbn)
 {
-    Node* node = library->root;
+    BNode* node = library->rootBook;
     if(node == NULL)
     {
         return;
@@ -78,13 +78,97 @@ void removeBookFromLib(Library* library, char* isbn)
         node = node->next;
     }
 
-    if (node->book->isbn == isbn)
+    if (node != NULL && node->book->isbn == isbn)
     {
-        Node* prev = node->prev;
-        Node* next = node->next;
+        BNode* prev = node->prev;
+        BNode* next = node->next;
         if(prev == NULL)
         {
-            library->root = next;
+            library->rootBook = next;
+        }
+        if(next != NULL)
+        {
+            next->prev = prev;
+        }
+        if(prev != NULL)
+        {
+            prev->next = next;
+        }
+
+        free(node);
+    }
+}
+
+void addCustomerToLib(Library* library, Customer* customer)
+{
+    CNode* newNode = (CNode*) malloc(sizeof(CNode));
+    CNode* rootNode = library->rootCustomer;
+    newNode->customer = customer;
+    newNode->prev = NULL;
+    newNode->next = NULL;
+    if (rootNode != NULL)
+    {
+        newNode->next = rootNode;
+        rootNode->prev = newNode;
+    }
+    library->rootCustomer = newNode;
+
+}
+
+Customer* getCustomerFromLib(Library* library, int id)
+{
+    CNode* node = library->rootCustomer;
+
+    while (node->next != NULL && node->customer->id != id)
+    {
+        node = node->next;
+    }
+    if (node != NULL && node->customer->id == id)
+    {
+        return node->customer;
+    }
+    return NULL;
+}
+
+void displayAllCustomersInLib(Library* library)
+{
+    CNode* node = library->rootCustomer;
+    while (node != NULL)
+    {
+        printCustomer(node->customer);
+        node = node->next;
+    }
+}
+
+void modifyCustomerFromLib(Library* library, int id, char* name, char* address)
+{
+    Customer* libBook = getCustomerFromLib(library, id);
+    if (libBook != NULL)
+    {
+        modifyCustomer(libBook, id, name, address);
+    }
+}
+
+void removeCustomerFromLib(Library* library, int id)
+{
+    CNode* node = library->rootCustomer;
+    if(node == NULL)
+    {
+        return;
+    }
+
+    while (node->next != NULL && node->customer->id != id)
+    {
+        node = node->next;
+    }
+
+    if (node != NULL && node->customer->id == id)
+    {
+        CNode* prev = node->prev;
+        CNode* next = node->next;
+        if(prev == NULL)
+        {
+            library->rootCustomer = next;
         }
         if(next != NULL)
         {
