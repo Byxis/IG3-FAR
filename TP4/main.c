@@ -1,6 +1,7 @@
 #include "Book.h"
 #include "Library.h"
 #include "Customer.h"
+#include "Date.h"
 #include <stdio.h>
 
 int main()
@@ -77,5 +78,60 @@ int main()
     printf("\n");
 
     printf("----- End of Test of Library Customer Struct... -----\n\n\n\n");
+
+    
+    printf("-----     Test of Date Struct...     -----\n\n");
+    Date* d1 = initialize_date(1, 1, 2021);
+    Date* d2 = initialize_date(27, 4, 2021);
+    Date* d3 = initialize_date(27, 4, 2021);
+    invalidateDate(d2);
+    printf("Date 1: %s\n", DatetoString(d1));
+    printf("Date 2: %s\n", DatetoString(d2));
+    printf("Date 3: %s\n", DatetoString(d3));
+    printf("Date 1 is %s\n", isDateValid(d1) ? "valid" : "invalid");
+    printf("Date 2 is %s\n", isDateValid(d2) ? "valid" : "invalid");
+    printf("Date 1 is %s to Date 2\n", compareDate(d1,d2) == 0 ? "equal" : compareDate(d1, d2) < 0 ? "prior" : "posterior");
+    printf("Date 2 is %s to Date 3\n", compareDate(d2,d3) == 0 ? "equal" : compareDate(d2, d3) < 0 ? "prior" : "posterior");
+    printf("\n");
+
+    addDaysToDate(d1, 127);
+    printf("Date 1 + 127 days: %s\n", DatetoString(d1));
+    printf("Date 1 is %s to Date 2\n", compareDate(d1,d2) == 0 ? "equal" : compareDate(d1, d2) < 0 ? "prior" : "posterior");
+    printf("----- End of Test of Date Struct... -----\n\n\n\n");
+
+    printf("-----     Test of Borrow Struct...     -----\n\n");
+    Borrow* bo1 = createBorrow(b1->isbn, c1->id, d1);
+    Borrow* bo2 = createBorrow(b2->isbn, c2->id, d2);
+    printBorrow(bo1);
+    printBorrow(bo2);
+    printf("\n");
+
+    modifyBorrow(bo1, b1->isbn, c1->id, d1);
+    printBorrow(bo1);
+    printf("\n");
+
+    printf("----- End of Test of Borrow Struct... -----\n\n\n\n");
+
+    printf("-----     Test of Library Borrow Struct...     -----\n\n");
+    addBorrowToLib(library, b1->isbn, c1->id, d1);
+    addBorrowToLib(library, b2->isbn, c2->id, d2);
+    addBorrowToLib(library, b2->isbn, c1->id, d3);
+    displayAllBorrowsFromLib(library);
+
+    printf("\nShowing all borrows of a book:\n");
+    displayBook(library, b2->isbn);
+
+    printf("\nShowing all borrows of a customer:\n");
+    displayCustomer(library, c1->id);
+
+    printf("\nRemoving first borrow:\n");
+    removeBorrowFromLib(library, b1->isbn, c1->id);
+    displayAllBorrowsFromLib(library);
+
+    printf("\nModifying last borrow:\n");
+    modifyBorrowFromLib(library, b2->isbn, c2->id, d2);
+    displayAllBorrowsFromLib(library);
+
+    printf("----- End of Test of Library Borrow Struct... -----\n\n\n\n");
     return 0;
 }

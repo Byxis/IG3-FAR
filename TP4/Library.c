@@ -1,6 +1,7 @@
 #include "Library.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 Library* createLib()
 {
@@ -14,6 +15,12 @@ Library* createLib()
 
     return library;
 }
+
+//---------------------------------------------------------------------------------------
+//                                                                                       
+//                                     BOOKS                                            
+//                                                                                       
+//---------------------------------------------------------------------------------------
 
 void addBookToLib(Library* library, Book* book)
 {
@@ -99,6 +106,30 @@ void removeBookFromLib(Library* library, char* isbn)
     }
 }
 
+void displayBook(Library* library, char* isbn)
+{
+    Book* book = getBookFromLib(library, isbn);
+    if (book != NULL && book->isbn == isbn)
+    {
+        printBook(book);
+        BoNode* nodeBorrow = library->rootBorrow;
+        while (nodeBorrow != NULL)
+        {
+            if (strcmp(nodeBorrow->borrow->bookIsbn, isbn) == 0)
+            {
+                printBorrow(nodeBorrow->borrow);
+            }
+            nodeBorrow = nodeBorrow->next;
+        }
+    }
+}
+
+//---------------------------------------------------------------------------------------
+//                                                                                       
+//                                     CUSTOMERS                                            
+//                                                                                       
+//---------------------------------------------------------------------------------------
+
 void addCustomerToLib(Library* library, Customer* customer)
 {
     CNode* newNode = (CNode*) malloc(sizeof(CNode));
@@ -169,6 +200,127 @@ void removeCustomerFromLib(Library* library, int id)
         if(prev == NULL)
         {
             library->rootCustomer = next;
+        }
+        if(next != NULL)
+        {
+            next->prev = prev;
+        }
+        if(prev != NULL)
+        {
+            prev->next = next;
+        }
+
+        free(node);
+    }
+}
+
+void displayCustomer(Library* library, int id)
+{
+    CNode* node = library->rootCustomer;
+    while (node != NULL && node->customer->id != id)
+    {
+        node = node->next;
+    }
+    if (node != NULL && node->customer->id == id)
+    {
+        printCustomer(node->customer);
+        BoNode* nodeBorrow = library->rootBorrow;
+        while (nodeBorrow != NULL)
+        {
+            if (nodeBorrow->borrow->customerId == id)
+            {
+                printBorrow(nodeBorrow->borrow);
+            }
+            nodeBorrow = nodeBorrow->next;
+        }
+    }
+}
+
+//---------------------------------------------------------------------------------------
+//                                                                                       
+//                                     BORROW                                            
+//      
+//---------------------------------------------------------------------------------------
+
+void addBorrowToLib(Library* library, char* bookIsbn, int customerId, Date* borrowDate)
+{
+    BoNode* newNode = (BoNode*) malloc(sizeof(BoNode));
+    BoNode* rootNode = library->rootBorrow;
+    newNode->borrow = createBorrow(bookIsbn, customerId, borrowDate);
+    newNode->prev = NULL;
+    newNode->next = NULL;
+    if (rootNode != NULL)
+    {
+        newNode->next = rootNode;
+        rootNode->prev = newNode;
+    }
+    library->rootBorrow = newNode;
+}
+
+
+Borrow* getBorrowInLib(Library* library, char* bookIsbn, int customerId)
+{
+    BoNode* node = library->rootBorrow;
+
+    while (node->next != NULL && (node->borrow->bookIsbn != bookIsbn || node->borrow->customerId != customerId))
+    {
+        node = node->next;
+    }
+    if (node != NULL && strcmp(node->borrow->bookIsbn, bookIsbn) && node->borrow->customerId == customerId)
+    {
+        return node->borrow;
+    }
+    return NULL;
+}
+
+void displayAllBorrowsFromLib(Library* library)
+{
+    BoNode* node = library->rootBorrow;
+    while (node != NULL)
+    {
+        printBorrow(node->borrow);
+        node = node->next;
+    }
+}
+
+void modifyBorrowFromLib(Library* library, char* bookIsbn, int customerId, Date* borrowDate)
+{
+    Borrow* libBook = getBorrowInLib(library, bookIsbn, customerId);
+    if (libBook != NULL)
+    {
+        modifyBorrow(libBook, bookIsbn, customerId, borrowDate);
+    }
+}
+
+void modifyBorrowPreciseFromLib(Library* library, char* bookIsbn, int customerId, Date* borrowDate, Date* returnDate)
+{
+    Borrow* libBook = getBorrowInLib(library, bookIsbn, customerId);
+    if (libBook != NULL)
+    {
+        modifyBorrowPrecise(libBook, bookIsbn, customerId, borrowDate, returnDate);
+    }
+}
+
+void removeBorrowFromLib(Library* library, char* bookIsbn, int customerId)
+{
+    BoNode* node = library->rootBorrow;
+    if(node == NULL)
+    {
+        return;
+    }
+
+    while (node->next != NULL && (node->borrow->bookIsbn != bookIsbn || node->borrow->customerId != customerId))
+    {
+        node = node->next;
+    }
+
+    if (node != NULL && strcmp(node->borrow->bookIsbn, bookIsbn) == 0 && node->borrow->customerId == customerId)
+    {
+        BoNode* prev = node->prev;
+        BoNode* next = node->next;
+        if(prev == NULL)
+        {
+            library->rootBorrow = next;
         }
         if(next != NULL)
         {
