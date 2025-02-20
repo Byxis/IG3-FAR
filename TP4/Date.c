@@ -24,15 +24,8 @@ bool isDateValid(Date* date)
 
 char* DatetoString(Date* date)
 {
-    char* result = (char*)malloc(11 * sizeof(char));    
-    if(isDateValid(date))
-    {
-        sprintf(result, "%02d/%02d/%04d", date->day, date->month, date->year);
-    }
-    else
-    {
-        sprintf(result, "%02d/%02d/%04d (invalid)", date->day, date->month, date->year);
-    }
+    char* result = (char*)malloc(13 * sizeof(char));    
+    sprintf(result, "%02d/%02d/%04d/%d", date->day, date->month, date->year, date->isValid);
 
 
     return result;

@@ -56,5 +56,7 @@ void modifyBorrowPreciseFromLib(Library* library, char* bookIsbn, int customerId
 void removeBorrowFromLib(Library* library, char* bookIsbn, int customerId);
 void returnBookFromLib(Library* library, char* bookIsbn, int customerId, Date* returnDate);
 
+void saveAllData(Library* library, char* booksFileName, char* customersFileName, char* borrowsFileName);
+void loadAllData();
 
 #endif

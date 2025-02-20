@@ -138,5 +138,9 @@ int main()
     displayAllBorrowsFromLib(library);
 
     printf("----- End of Test of Library Borrow Struct... -----\n\n\n\n");
+
+    saveAllData(library, "books.csv", "customers.csv", "borrows.csv");
+
+    
     return 0;
 }

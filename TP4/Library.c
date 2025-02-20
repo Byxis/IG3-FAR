@@ -333,6 +333,7 @@ void removeBorrowFromLib(Library* library, char* bookIsbn, int customerId)
 
         free(node);
     }
+}
 
 
 void returnBookFromLib(Library* library, char* bookIsbn, int customerId, Date* returnDate)
@@ -346,4 +347,35 @@ void returnBookFromLib(Library* library, char* bookIsbn, int customerId, Date* r
 
 
 
+void saveAllData(Library* library, char* booksFileName, char* customersFileName, char* borrowsFileName)
+{
+    FILE* booksFile = fopen(booksFileName, "w");
+    BNode* bookNode = library->rootBook;
+    while (bookNode != NULL) 
+    {
+        Book* b = bookNode->book;
+        fprintf(booksFile, "%s ; %s ; %s ; %d ; %d \n", b->isbn, b->title, b->author, b->year, b->isAvailable);
+        bookNode = bookNode->next;
+    }
+    fclose(booksFile);
+
+    FILE* customersFile = fopen(customersFileName, "w");
+    CNode* customerNode = library->rootCustomer;
+    while (customerNode != NULL) 
+    {
+        Customer* c = customerNode->customer;
+        fprintf(customersFile, "%d ; %s ; %s \n", c->id, c->name, c->address);
+        customerNode = customerNode->next;
+    }
+    fclose(customersFile);
+    
+    FILE* borrowsFile = fopen(borrowsFileName, "w");
+    BoNode* borrowNode = library->rootBorrow;
+    while (borrowNode != NULL) 
+    {
+        Borrow* b = borrowNode->borrow;
+        fprintf(borrowsFile, "%s ; %d ; %s ; %s \n", b->bookIsbn, b->customerId, DatetoString(b->date), DatetoString(b->returnDate));
+        borrowNode = borrowNode->next;
+    }
+    fclose(borrowsFile);
 }

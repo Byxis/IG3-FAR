@@ -41,7 +41,7 @@ Book* modifyBook(Book* bookToModify, char* isbn, char* title, char* author, int 
     return bookToModify;
 }
 
-Book* setAvailable(Book* book, int available)
+void setAvailable(Book* book, int available)
 {
     book->isAvailable = available;
 }
