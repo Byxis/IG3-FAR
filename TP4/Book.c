@@ -22,6 +22,7 @@ Book* createBook(char* isbn, char* title, char* author, int year)
     book->title = (char*) malloc(sizeof(char) * strlen(title) + 1);
     book->author = (char*) malloc(sizeof(char) * strlen(author) + 1);
     book->year = year;
+    book->isAvailable = 1;
     strcpy(book->isbn, isbn);
     strcpy(book->title, title);
     strcpy(book->author, author);
@@ -38,4 +39,9 @@ Book* modifyBook(Book* bookToModify, char* isbn, char* title, char* author, int 
     strcpy(bookToModify->author, author);
     bookToModify->year = year;
     return bookToModify;
+}
+
+Book* setAvailable(Book* book, int available)
+{
+    book->isAvailable = available;
 }

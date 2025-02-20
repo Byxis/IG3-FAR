@@ -81,10 +81,10 @@ int main()
 
     
     printf("-----     Test of Date Struct...     -----\n\n");
-    Date* d1 = initialize_date(1, 1, 2021);
-    Date* d2 = initialize_date(27, 4, 2021);
-    Date* d3 = initialize_date(27, 4, 2021);
-    invalidateDate(d2);
+    Date* d1 = initialize_date(10, 3, 2024);
+    Date* d2 = initialize_date(25, 1, 2025);
+    Date* d3 = initialize_date(25, 1, 2025);
+    setValid(d2, 0);
     printf("Date 1: %s\n", DatetoString(d1));
     printf("Date 2: %s\n", DatetoString(d2));
     printf("Date 3: %s\n", DatetoString(d3));
@@ -113,9 +113,14 @@ int main()
     printf("----- End of Test of Borrow Struct... -----\n\n\n\n");
 
     printf("-----     Test of Library Borrow Struct...     -----\n\n");
+    d1 = initialize_date(10, 3, 2024);
+    d2 = initialize_date(25, 1, 2025);
+    d3 = initialize_date(25, 1, 2025);
     addBorrowToLib(library, b1->isbn, c1->id, d1);
+    returnBookFromLib(library, b1->isbn, c1->id, initialize_date(13, 8, 2024));
     addBorrowToLib(library, b2->isbn, c2->id, d2);
     addBorrowToLib(library, b2->isbn, c1->id, d3);
+    returnBookFromLib(library, b2->isbn, c1->id, initialize_date(28, 1, 2025));
     displayAllBorrowsFromLib(library);
 
     printf("\nShowing all borrows of a book:\n");
@@ -129,7 +134,7 @@ int main()
     displayAllBorrowsFromLib(library);
 
     printf("\nModifying last borrow:\n");
-    modifyBorrowFromLib(library, b2->isbn, c2->id, d2);
+    modifyBorrowFromLib(library, b2->isbn, c2->id, b1->isbn, c2->id, d1);
     displayAllBorrowsFromLib(library);
 
     printf("----- End of Test of Library Borrow Struct... -----\n\n\n\n");

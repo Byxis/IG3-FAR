@@ -51,8 +51,10 @@ void displayCustomer(Library* library, int id);
 void addBorrowToLib(Library* library, char* bookIsbn, int customerId, Date* borrowDate);
 Borrow* getBorrowInLib(Library* library, char* bookIsbn, int customerId);
 void displayAllBorrowsFromLib(Library* library);
-void modifyBorrowFromLib(Library* library, char* bookIsbn, int customerId, Date* borrowDate);
-void modifyBorrowPreciseFromLib(Library* library, char* bookIsbn, int customerId, Date* borrowDate, Date* returnDate);
+void modifyBorrowFromLib(Library* library, char* bookIsbn, int customerId, char* newBookIsb, int newCustomerId, Date* borrowDate);
+void modifyBorrowPreciseFromLib(Library* library, char* bookIsbn, int customerId, char* newBookIsb, int newCustomerId, Date* borrowDate, Date* returnDate);
 void removeBorrowFromLib(Library* library, char* bookIsbn, int customerId);
+void returnBookFromLib(Library* library, char* bookIsbn, int customerId, Date* returnDate);
+
 
 #endif

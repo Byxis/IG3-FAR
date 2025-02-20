@@ -115,7 +115,7 @@ void displayBook(Library* library, char* isbn)
         BoNode* nodeBorrow = library->rootBorrow;
         while (nodeBorrow != NULL)
         {
-            if (strcmp(nodeBorrow->borrow->bookIsbn, isbn) == 0)
+            if (!strcmp(nodeBorrow->borrow->bookIsbn, isbn))
             {
                 printBorrow(nodeBorrow->borrow);
             }
@@ -262,11 +262,11 @@ Borrow* getBorrowInLib(Library* library, char* bookIsbn, int customerId)
 {
     BoNode* node = library->rootBorrow;
 
-    while (node->next != NULL && (node->borrow->bookIsbn != bookIsbn || node->borrow->customerId != customerId))
+    while (node->next != NULL && !(!strcmp(node->borrow->bookIsbn, bookIsbn) && node->borrow->customerId == customerId))
     {
         node = node->next;
     }
-    if (node != NULL && strcmp(node->borrow->bookIsbn, bookIsbn) && node->borrow->customerId == customerId)
+    if (node != NULL && !strcmp(node->borrow->bookIsbn, bookIsbn) && node->borrow->customerId == customerId)
     {
         return node->borrow;
     }
@@ -283,21 +283,21 @@ void displayAllBorrowsFromLib(Library* library)
     }
 }
 
-void modifyBorrowFromLib(Library* library, char* bookIsbn, int customerId, Date* borrowDate)
+void modifyBorrowFromLib(Library* library, char* bookIsbn, int customerId, char* newBookIsb, int newCustomerId, Date* borrowDate)
 {
-    Borrow* libBook = getBorrowInLib(library, bookIsbn, customerId);
-    if (libBook != NULL)
+    Borrow* borrow = getBorrowInLib(library, bookIsbn, customerId);
+    if (borrow != NULL)
     {
-        modifyBorrow(libBook, bookIsbn, customerId, borrowDate);
+        modifyBorrow(borrow, newBookIsb, newCustomerId, borrowDate);
     }
 }
 
-void modifyBorrowPreciseFromLib(Library* library, char* bookIsbn, int customerId, Date* borrowDate, Date* returnDate)
+void modifyBorrowPreciseFromLib(Library* library, char* bookIsbn, int customerId, char* newBookIsb, int newCustomerId, Date* borrowDate, Date* returnDate)
 {
-    Borrow* libBook = getBorrowInLib(library, bookIsbn, customerId);
-    if (libBook != NULL)
+    Borrow* borrow = getBorrowInLib(library, bookIsbn, customerId);
+    if (borrow != NULL)
     {
-        modifyBorrowPrecise(libBook, bookIsbn, customerId, borrowDate, returnDate);
+        modifyBorrowPrecise(borrow, newBookIsb, newCustomerId, borrowDate, returnDate);
     }
 }
 
@@ -309,12 +309,12 @@ void removeBorrowFromLib(Library* library, char* bookIsbn, int customerId)
         return;
     }
 
-    while (node->next != NULL && (node->borrow->bookIsbn != bookIsbn || node->borrow->customerId != customerId))
+    while (node->next != NULL && (strcmp(node->borrow->bookIsbn, bookIsbn) || node->borrow->customerId != customerId))
     {
         node = node->next;
     }
 
-    if (node != NULL && strcmp(node->borrow->bookIsbn, bookIsbn) == 0 && node->borrow->customerId == customerId)
+    if (node != NULL && !strcmp(node->borrow->bookIsbn, bookIsbn) && node->borrow->customerId == customerId)
     {
         BoNode* prev = node->prev;
         BoNode* next = node->next;
@@ -333,4 +333,17 @@ void removeBorrowFromLib(Library* library, char* bookIsbn, int customerId)
 
         free(node);
     }
+
+
+void returnBookFromLib(Library* library, char* bookIsbn, int customerId, Date* returnDate)
+{
+    Borrow* libBook = getBorrowInLib(library, bookIsbn, customerId);
+    if (libBook != NULL)
+    {
+        returnBook(libBook, returnDate);
+    }
+}
+
+
+
 }

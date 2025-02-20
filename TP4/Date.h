@@ -10,7 +10,7 @@ typedef struct DateStruct {
 } Date;
 
 Date* initialize_date(int day, int month, int year);
-void invalidateDate(Date* date);
+void setValid(Date* date, bool valid);
 bool isDateValid(Date* date);
 char* DatetoString(Date* date);
 void addDaysToDate(Date* date, int days);
