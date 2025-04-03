@@ -1,0 +1,131 @@
+\documentclass{article}
+
+% Language setting
+% Replace `english' with e.g. `spanish' to change the document language
+\usepackage[french]{babel}
+
+% Set page size and margins
+% Replace `letterpaper' with `a4paper' for UK/EU standard size
+\usepackage[a4paper,top=2cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
+
+% Useful packages
+\usepackage{amsmath}
+\usepackage{enumitem}
+\usepackage{graphicx}
+\usepackage{svg}
+\usepackage[colorlinks=true, allcolors=blue]{hyperref}
+\usepackage{float}
+
+
+% Integration du python
+\usepackage{listings}
+\usepackage{xcolor}
+
+\title{Rapport TP - Synchronisation des processus, tubes et signaux}
+\author{Alexis Serrano}
+
+\begin{document}
+	\maketitle
+	\section{C’est du lourd}
+	\begin{enumerate}
+		\item Combien de processus sont créés par ce programme ? \\
+			\textcolor{blue}{500} \\
+		\item Quel est le but de ce programme ? \\
+			\textcolor{blue}{Le programme créé 500 processus, les affiche et les compte. } \\
+		\item Que va-t-il se passer lors de l’exécution, c’est-à-dire que va produire l’exécution de ce programme à l’écran ? \\
+			\textcolor{blue}{Il affiche les fils de 2 à 499, puis affiche le processus père 1.} \\
+		\item Êtes-vous surpris du résultat de l’exécution du programme ? pourquoi ? expliquez ce
+		qui ne marche pas bien : \\
+			\textcolor{blue}{La variable somme a la valeur 1 après tous les fils. En effet, le père qui a la somme à 0 appelle 499 fils qui ont chacun le même père et donc incrémente de 1 la somme et se termine, donc la variable n'est pas augmentée.} \\
+		\item Pourquoi c’est toujours la ligne du processus père qui s’affiche en dernier ? \\
+			\textcolor{blue}{Car l'affichage du processus père se fait après avoir appelé ses fils.} \\
+	\end{enumerate}
+	
+	\section{Se sentir plus léger}
+	\begin{enumerate}
+		\item Quelle(s) différence(s) avec le programme précédent ? \\
+			\textcolor{blue}{Maintenant, les fils renvoient leur valeur de somme pour l'incrémenter. Les threads s'exécutent puis attend que tous les fils se rejoignent pour finir le programme.} \\
+		\item Prévoyez-vous que son exécution va donner ou pas un résultat différent du programme précédent ? pourquoi ? \\
+			\textcolor{blue}{Oui, le résultat sera différent : la somme sera incrémentée.} \\
+		\item Que constatez-vous ? expliquez (sauf si vous aviez deviné juste ci-dessus). \\
+			\textcolor{blue}{On constate que la somme est bien incrémentée, mais la somme est parfois fausse. En effet, certains fils plus jeunes s'exécutent après un fils plus âgé, ce qui entraîne un retour en arrière.} \\
+		\item Rappelez quel est l’avantage des threads sur les processus classiques (créés par un
+		appel système fork() ) : \\
+			\textcolor{blue}{Les threads permettent une meilleure efficacité et une utilisation réduite des ressources par rapport aux processus classiques, car ils partagent le même espace mémoire et les mêmes ressources. Cela permet de réduire le coût de la création et de la gestion des threads.} \\
+		\item Mais au fait vous aurait-on menti : vérifions si les processus créés par fork() ont
+		bien un numéro de processus différent les uns des autres. Comment afficher le numéro
+		de processus (pid) de chaque processus (et du père aussi) ? \\
+			\textcolor{blue}{printf(``Pid :\%d \textbackslash{}n'', getpid());}\\
+		\item Modifiez cpt-lourd.c pour que chaque processus (père et fils) affichent leur pid puis
+		indiquez ce que vous constatez \\
+			\textcolor{blue}{Les PIDs sont différent dans ce programme.}\\
+		\item Faites la même modification pour cpt-leger et indiquez ce que vous constatez : \\
+			\textcolor{blue}{Les PIDs sont identiques sur les fils et le père.}\\
+		\item Dans les deux cas, si vous avez la chance que la commande pstree soit installée,
+		lancez-la depuis un autre terminal pendant que chacun des programmes ci-dessus
+		s’exécute, et vérifiez les filiations éventuelles (sinon avec la commande ps -l ). Ce
+		que vous observez est comme attendu ou pas (pourquoi) ? \\
+			\textcolor{blue}{}\\
+		\item Vérifions maintenant la charge pour le système d’un programme comparé à l’autre.
+		Après avoir consulté man time, expliquez à quoi sert cette commande en deux lignes
+		(max) : \\
+			\textcolor{blue}{La commande time permet de déterminer la durée d'exécution d'une commande donnée.}\\
+		\item Lancez maintenant les deux programmes précédés de la commande time. Quels
+		temps obtenus pour cpt-leger en moyenne détaillez user et système : \\
+			\textcolor{blue}{real    0m0.029s \\
+				user    0m0.000s \\
+				sys     0m0.037s}\\
+		\item Idem pour cpt-lourd : \\
+			\textcolor{blue}{real    0m0.040s \\
+				user    0m0.074s \\
+				sys     0m0.036s}\\
+		\item Conclusion : quel programme est le plus coûteux pour la machine à faire tourner ?
+		Comment expliquer ça ? \\
+			\textcolor{blue}{C'est le programme lourd le plus coûteux : cela s'explique par le fait qu'un processus doit copier la mémoire, et cette copie prends du temps.}\\
+		\item Question \\
+			\textcolor{blue}{}\\
+			
+	\end{enumerate}
+	\section{Les bons comptes font les bons amis}
+	\begin{enumerate}
+		\item Complétez les phrases suivantes avec les mots proposés en dessous : \\
+			\textit{Le problème constaté vient du fait que le programme contient une \textcolor{blue}{section critique}
+			et que l’accès à celle-ci n’est pas protégé. Pour que le programme fonctionne il faut
+			garantir une \textcolor{blue}{exclusion mutuelle}. Ceci peut être réalisé grâce au mécanisme
+			des \textcolor{blue}{sémaphores} qui permet de plus d’éviter \textcolor{blue}{l'attente active}
+			contrairement à d’autres solutions logicielles.}\\
+		\item Pour remédier au problème ci-dessus, on va maintenant regarder le programme
+		mutex-thread.c. Ouvrez ce programme et remarquez comment en faisant attendre
+		les processus fils un temps non prévisible à un endroit critique, on peut utiliser bien
+		moins de threads pour provoquer le soucis repéré précédemment : compilez et
+		exécutez le programme pour vérifier. \\
+			\textcolor{blue}{}\\
+		\item On s'aperçoit qu'un mutex est initialisé l 11. Rappelez ce qu'est un mutex, quelle est la différence avec un sémaphore ? \\
+			\textcolor{blue}{Un mutex (mutual exclusion) est un mécanisme de synchronisation qui permet de garantir qu'une seule ressource (ou section critique) est accessible par un seul thread à la fois. Un sémaphore permet restreindre l'accès à des ressources partagées dans un environnement de programmation concurrente. Le sémaphore permet donc un contrôle plus flexible du nombre de threads pouvant accéder simultanément à la ressource}\\
+		\item Dans quel cas voudrait-on donner une valeur plus importante à un sémaphore ? \\
+			\textcolor{blue}{On voudrait donner une valeur plus importante à un sémaphore lorsque l'on souhaite permettre à plusieurs threads d'accéder simultanément à une ressource partagée}\\
+		\item Placez les instructions suivantes au bon endroit dans le code (à nouveau voir diapos du cours, si nécessaire) : \\
+		$pthread\_mutex\_lock (\&mutex);$ \\
+		$pthread\_mutex\_unlock (\&mutex);$ \\
+		Puis compiler et exécuter le code pour voir si le soucis de compteur est réglé ou pas
+		(vérifiez sur plusieurs exécutions). Vérifiez déjà sur plusieurs exécutions du programme
+		que le soucis est réglé, puis pour vérifier d’une autre façon, commentez la partie qui fait
+		dormir les processus et passez à 10 000 processus. Est-ce ok au bout de 10 essais à 10
+		000 processus ? \\
+			\textcolor{blue}{C'est ok!}\\
+		\item Question \\
+			\textcolor{blue}{}\\
+	\end{enumerate}
+	\section{Signaux et tube}
+	\begin{enumerate}
+		\item Question \\
+			\textcolor{blue}{}\\
+	\end{enumerate}
+	\section{Le tout à la fois}
+	\begin{enumerate}
+		\item Question \\
+			\textcolor{blue}{}\\
+	\end{enumerate}
+		
+	
+\end{document}

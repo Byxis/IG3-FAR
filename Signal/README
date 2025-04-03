@@ -1,0 +1,3 @@
+Pour compiler du C avec la bibliothèque pthread :
+
+gcc -o cpt-leger cpt-leger.c -lpthread
